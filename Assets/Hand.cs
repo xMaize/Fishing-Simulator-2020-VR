@@ -7,6 +7,10 @@ public class Hand : MonoBehaviour
     Rigidbody attachedRigidBody;
     public OVRInput.Controller myHand;
     public Transform attachPoint;
+    public Transform Laser;
+    public Transform trackingSpace;
+    public float speed;
+    public Transform head;
 
     // Start is called before the first frame update
     void Start()
@@ -17,7 +21,60 @@ public class Hand : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        
+        Ray r = new Ray(Laser.position, Laser.forward);
+        RaycastHit[] hits = Physics.RaycastAll(r, 100.0f);
+
+        Laser.localScale = new Vector3(0, 0, 0);
+        for (int i = 0; i < hits.Length; i++)
+        {
+            Laser.localScale = new Vector3(1, 1, hits[i].distance);
+            RaycastHit hit = hits[i];
+            Rigidbody rb = hit.rigidbody;
+            if (rb != null)
+            {
+                float triggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, myHand);
+
+                if (triggerValue > 0.05f && attachedRigidBody == null)
+                {
+                    attachedRigidBody = rb;
+                    attachPoint.position = this.transform.position;
+                    attachPoint.rotation = this.transform.rotation;
+                }
+                break;
+            }
+            else
+            {
+                //teleportation
+                Vector3 targetPoint = hit.point;
+                Vector3 footPos = head.position;
+                footPos.y -= head.localPosition.y;
+                Vector3 offset = targetPoint - footPos;
+
+                bool trigger = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, myHand);
+
+                if (trigger)
+                {
+                    trackingSpace.Translate(offset, Space.World);
+                }
+                break;
+            }
+        }
+
+        Vector2 joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, myHand);
+        float up = joystickInput.y;
+        float right = joystickInput.x;
+
+        Vector3 headForwardVector = head.forward;
+        headForwardVector.y = 0;
+        headForwardVector.Normalize();
+        Vector3 headRightVector = head.right;
+        headRightVector.y = 0;
+        headRightVector.Normalize();
+
+        Vector3 direction = headForwardVector * up + headRightVector * right;
+
+        trackingSpace.transform.Translate(direction * speed * Time.deltaTime, Space.World);
+
     }
 
     private void FixedUpdate()
