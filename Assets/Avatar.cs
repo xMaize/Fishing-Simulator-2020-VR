@@ -34,8 +34,8 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunObservable
 
     void Start()
     {
-        head.gameObject.SetActive(false);
-        body.gameObject.SetActive(false);
+        //head.gameObject.SetActive(false);
+        //body.gameObject.SetActive(false);
     }
 
     // Update is called once per frame
