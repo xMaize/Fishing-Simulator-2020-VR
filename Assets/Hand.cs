@@ -23,12 +23,13 @@ public class Hand : MonoBehaviour
     {
         Ray r = new Ray(Laser.position, Laser.forward);
         RaycastHit[] hits = Physics.RaycastAll(r, 100.0f);
-
+        System.Array.Sort(hits, (x, y) => x.distance.CompareTo(y.distance));
         Laser.localScale = new Vector3(0, 0, 0);
         for (int i = 0; i < hits.Length; i++)
         {
             Laser.localScale = new Vector3(1, 1, hits[i].distance);
             RaycastHit hit = hits[i];
+            Debug.Log("Hit: " + hit.collider.gameObject.name + " " + i);
             Rigidbody rb = hit.rigidbody;
             if (rb != null)
             {
@@ -44,20 +45,23 @@ public class Hand : MonoBehaviour
             }
             else
             {
-                //teleportation
-                Vector3 targetPoint = hit.point;
-                Vector3 footPos = head.position;
-                footPos.y -= head.localPosition.y;
-                Vector3 offset = targetPoint - footPos;
+                if (attachedRigidBody == null) {
+                    //teleportation
+                    Vector3 targetPoint = hit.point;
+                    Vector3 footPos = head.position;
+                    footPos.y -= head.localPosition.y;
+                    Vector3 offset = targetPoint - footPos;
 
-                bool trigger = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, myHand);
+                    bool trigger = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, myHand);
 
-                if (trigger)
-                {
-                    trackingSpace.Translate(offset, Space.World);
+                    if (trigger)
+                    {
+                        trackingSpace.Translate(offset, Space.World);
+                    }
+                    break;
                 }
-                break;
             }
+            
         }
 
         Vector2 joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, myHand);
