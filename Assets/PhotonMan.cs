@@ -14,10 +14,21 @@ public class PhotonMan : MonoBehaviourPunCallbacks
 
     public GameObject playerPrefab;
     public Rig rig;
+
     void Start()
     {
-        PhotonNetwork.SendRate = 2;
+        PhotonNetwork.SendRate = 20;
         PhotonNetwork.ConnectUsingSettings();
+        StartCoroutine(Reconnect());
+    }
+
+    IEnumerator Reconnect()
+    {
+        yield return new WaitForSeconds(5f);
+        if (!PhotonNetwork.IsConnected)
+        {
+            PhotonNetwork.ConnectUsingSettings();
+        }
     }
 
     public override void OnConnectedToMaster()

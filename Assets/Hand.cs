@@ -96,7 +96,7 @@ public class Hand : MonoBehaviour
             attachedRigidBody.angularVelocity = angularVelocity;
         }
     }
-
+    
     private void OnTriggerStay(Collider other)
     {
         Rigidbody otherRb = other.attachedRigidbody;
@@ -114,13 +114,12 @@ public class Hand : MonoBehaviour
             attachedRigidBody.maxAngularVelocity = Mathf.Infinity;
             attachPoint.position = attachedRigidBody.position;
             attachPoint.rotation = attachedRigidBody.rotation;
-            this.GetComponent<MeshRenderer>().enabled = false;
         }
         else if (triggerValue < 0.04f && attachedRigidBody != null)
         {
             attachedRigidBody = null;
-            this.GetComponent<MeshRenderer>().enabled = true;
         }        
      
     }
+    
 }
