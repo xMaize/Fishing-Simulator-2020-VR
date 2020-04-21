@@ -56,6 +56,8 @@ MonoBehaviour:
   rightHand: {fileID: 6312894916177069323}
   networkHeadPos: {x: 0, y: 0, z: 0}
   networkHeadRot: {x: 0, y: 0, z: 0, w: 0}
+  networkBodyPos: {x: 0, y: 0, z: 0}
+  networkBodyRot: {x: 0, y: 0, z: 0, w: 0}
   networkLeftHandPos: {x: 0, y: 0, z: 0}
   networkLeftHandRot: {x: 0, y: 0, z: 0, w: 0}
   networkRightHandPos: {x: 0, y: 0, z: 0}

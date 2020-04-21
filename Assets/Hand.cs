@@ -22,7 +22,7 @@ public class Hand : MonoBehaviour
     void Update()
     {
         Ray r = new Ray(Laser.position, Laser.forward);
-        RaycastHit[] hits = Physics.RaycastAll(r, 100.0f);
+        RaycastHit[] hits = Physics.RaycastAll(r, 10.0f);
         System.Array.Sort(hits, (x, y) => x.distance.CompareTo(y.distance));
         Laser.localScale = new Vector3(0, 0, 0);
         for (int i = 0; i < hits.Length; i++)
@@ -40,6 +40,8 @@ public class Hand : MonoBehaviour
                     attachedRigidBody = rb;
                     attachPoint.position = this.transform.position;
                     attachPoint.rotation = this.transform.rotation;
+
+                    //rb.rotation = new Quaternion(this.transform.rotation.x - 90, this.transform.rotation.y-180, this.transform.rotation.z - 90, 1);
                 }
                 break;
             }
