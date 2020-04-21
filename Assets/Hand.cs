@@ -29,7 +29,6 @@ public class Hand : MonoBehaviour
         {
             Laser.localScale = new Vector3(1, 1, hits[i].distance);
             RaycastHit hit = hits[i];
-            Debug.Log("Hit: " + hit.collider.gameObject.name + " " + i);
             Rigidbody rb = hit.rigidbody;
             if (rb != null)
             {
@@ -40,8 +39,6 @@ public class Hand : MonoBehaviour
                     attachedRigidBody = rb;
                     attachPoint.position = this.transform.position;
                     attachPoint.rotation = this.transform.rotation;
-
-                    //rb.rotation = new Quaternion(this.transform.rotation.x - 90, this.transform.rotation.y-180, this.transform.rotation.z - 90, 1);
                 }
                 break;
             }
@@ -122,6 +119,11 @@ public class Hand : MonoBehaviour
             attachedRigidBody = null;
         }        
      
+    }
+
+    public bool isHolding()
+    {
+        return attachedRigidBody != null;
     }
     
 }

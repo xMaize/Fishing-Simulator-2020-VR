@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using System.Collections.Generic;
 
 namespace LowPolyWater
 {
@@ -7,6 +8,7 @@ namespace LowPolyWater
         public float waveHeight = 0.5f;
         public float waveFrequency = 0.5f;
         public float waveLength = 0.75f;
+        private List<Rigidbody> rigidbodies = new List<Rigidbody>();
 
         //Position where the waves originate from
         public Vector3 waveOriginPosition = new Vector3(0.0f, 0.0f, 0.0f);
@@ -66,6 +68,24 @@ namespace LowPolyWater
             GenerateWaves();
         }
 
+        private void FixedUpdate()
+        {
+            for (int i = 0; i < rigidbodies.Count; i++)
+            {
+                if (rigidbodies[i].transform.position.y > transform.position.y)
+                {
+                    rigidbodies[i].AddForce(Physics.gravity);
+                    rigidbodies[i].drag = 1;
+                }
+                else
+                {
+                    rigidbodies[i].AddForce(-1 * Physics.gravity + new Vector3(0, 0.1f, 0));
+                    rigidbodies[i].drag = 10;
+                    //rigidbodies[i].AddTorque(-rigidbodies[i].angularVelocity * 0.05f);
+                }
+            }
+        }
+
         /// <summary>
         /// Based on the specified wave height and frequency, generate 
         /// wave motion originating from waveOriginPosition
@@ -97,5 +117,34 @@ namespace LowPolyWater
             mesh.MarkDynamic();
             meshFilter.mesh = mesh;
         }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            Rigidbody otherRb = other.attachedRigidbody;
+            Debug.Log("Name: " + otherRb.name);
+
+            if (otherRb == null)
+            {
+                return;
+            }
+
+            rigidbodies.Add(otherRb);
+            Debug.Log("Count: " + rigidbodies.Count);
+        }
+
+        /*
+        private void OnTriggerExit(Collider other)
+        {
+            Rigidbody otherRb = other.attachedRigidbody;
+
+            if (otherRb == null)
+            {
+                return;
+            }
+
+            rigidbodies.Remove(otherRb);
+        }
+        */
+
     }
 }

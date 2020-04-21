@@ -82,5 +82,25 @@ public class Avatar : MonoBehaviourPunCallbacks, IPunObservable
             rightHand.position = Vector3.Lerp(rightHand.position, networkRightHandPos, .05f);
             rightHand.rotation = Quaternion.Slerp(rightHand.rotation, networkRightHandRot, .05f);
         }
+        
+        if (rig.right.isHolding())
+        {
+            rightHand.gameObject.SetActive(false);
+        }
+        else
+        {
+            rightHand.gameObject.SetActive(true);
+        }
+
+        if (rig.left.isHolding())
+        {
+            leftHand.gameObject.SetActive(false);
+        }
+        else
+        {
+            leftHand.gameObject.SetActive(true);
+        }
+
     }
+
 }

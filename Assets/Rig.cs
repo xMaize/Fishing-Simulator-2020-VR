@@ -8,4 +8,12 @@ public class Rig : MonoBehaviour
     public Transform head;
     public Transform leftHand;
     public Transform rightHand;
+    public Hand left;
+    public Hand right;
+
+    public void Update()
+    {
+        
+    }
+
 }
