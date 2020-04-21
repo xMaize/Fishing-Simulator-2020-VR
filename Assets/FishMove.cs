@@ -12,19 +12,31 @@ public class FishMove : MonoBehaviour
         StartCoroutine(randomHit());
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-
-    }
     //Gives the fish a new destination on the NavMesh every 10 seconds
     IEnumerator randomHit()
     {
+        bool firstPass = true;
+        Vector3 prevDirection = new Vector3(0, 0, 0);
+
         while (true)
         {
             NavMeshAgent agent = GetComponent<NavMeshAgent>();
 
             Vector3 randomDirection = Random.insideUnitSphere * 15;
+
+            if(!firstPass)
+            {
+                if (((randomDirection.x > 0f && prevDirection.x > 0f) && (randomDirection.z > 0f && prevDirection.z > 0f)) ||
+                  ((randomDirection.x < 0f && prevDirection.x < 0f) && (randomDirection.z < 0f && prevDirection.z < 0f)) ||
+                  ((randomDirection.x > 0f && prevDirection.x > 0f) && (randomDirection.z < 0f && prevDirection.z < 0f)) ||
+                  ((randomDirection.x < 0f && prevDirection.x < 0f) && (randomDirection.z > 0f && prevDirection.z > 0f)))
+                {
+                    randomDirection = Random.insideUnitSphere * 15;
+                }
+            }
+
+            prevDirection = randomDirection;
+            firstPass = false;
 
             randomDirection += transform.position;
             NavMeshHit hit;
@@ -33,7 +45,7 @@ public class FishMove : MonoBehaviour
 
             agent.destination = finalPosition;
 
-            yield return new WaitForSeconds(3);
+            yield return new WaitForSeconds(8);
         }
 
     }
