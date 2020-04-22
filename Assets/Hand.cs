@@ -11,6 +11,7 @@ public class Hand : MonoBehaviour
     public Transform trackingSpace;
     public float speed;
     public Transform head;
+    bool isGrabbing = false;
 
     // Start is called before the first frame update
     void Start()
@@ -23,45 +24,48 @@ public class Hand : MonoBehaviour
     {
         Ray r = new Ray(Laser.position, Laser.forward);
         RaycastHit[] hits = Physics.RaycastAll(r, 10.0f);
+        
         System.Array.Sort(hits, (x, y) => x.distance.CompareTo(y.distance));
         Laser.localScale = new Vector3(0, 0, 0);
-        for (int i = 0; i < hits.Length; i++)
-        {
-            Laser.localScale = new Vector3(1, 1, hits[i].distance);
-            RaycastHit hit = hits[i];
-            Rigidbody rb = hit.rigidbody;
-            if (rb != null)
-            {
-                float triggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, myHand);
 
-                if (triggerValue > 0.05f && attachedRigidBody == null)
+
+            for (int i = 0; i < hits.Length; i++)
+            {
+                Laser.localScale = new Vector3(1, 1, hits[i].distance);
+                RaycastHit hit = hits[i];
+                Rigidbody rb = hit.rigidbody;
+                if (rb != null)
                 {
-                    attachedRigidBody = rb;
-                    attachPoint.position = this.transform.position;
-                    attachPoint.rotation = this.transform.rotation;
-                }
-                break;
-            }
-            else
-            {
-                if (attachedRigidBody == null) {
-                    //teleportation
-                    Vector3 targetPoint = hit.point;
-                    Vector3 footPos = head.position;
-                    footPos.y -= head.localPosition.y;
-                    Vector3 offset = targetPoint - footPos;
+                    float triggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, myHand);
 
-                    bool trigger = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, myHand);
-
-                    if (trigger)
+                    if (triggerValue > 0.05f && attachedRigidBody == null)
                     {
-                        trackingSpace.Translate(offset, Space.World);
+                        attachedRigidBody = rb;
+                        attachPoint.position = this.transform.position;
+                        attachPoint.rotation = this.transform.rotation;
                     }
                     break;
                 }
-            }
-            
-        }
+                else
+                {
+                    if (attachedRigidBody == null)
+                    {
+                        //teleportation
+                        Vector3 targetPoint = hit.point;
+                        Vector3 footPos = head.position;
+                        footPos.y -= head.localPosition.y;
+                        Vector3 offset = targetPoint - footPos;
+
+                        bool trigger = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, myHand);
+
+                        if (trigger)
+                        {
+                            trackingSpace.Translate(offset, Space.World);
+                        }
+                        break;
+                    }//if
+                }//else   
+            }//for
 
         Vector2 joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, myHand);
         float up = joystickInput.y;

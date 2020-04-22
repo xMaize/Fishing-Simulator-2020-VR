@@ -21,7 +21,19 @@ public class FishMove : MonoBehaviour
         while (true)
         {
             NavMeshAgent agent = GetComponent<NavMeshAgent>();
-
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 5f);
+            int i = 0;
+            
+            while(i < hitColliders.Length)
+            {                
+                if(hitColliders[i].name == "bobber")
+                {
+                    agent.destination = hitColliders[i].attachedRigidbody.position;
+                    yield return new WaitForSeconds(6);
+                }
+                i++;
+             }
+            
             Vector3 randomDirection = Random.insideUnitSphere * 15;
 
             if(!firstPass)
@@ -47,6 +59,8 @@ public class FishMove : MonoBehaviour
 
             yield return new WaitForSeconds(8);
         }
+
+        
 
     }
 }
