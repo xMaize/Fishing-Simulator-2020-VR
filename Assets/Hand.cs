@@ -11,7 +11,6 @@ public class Hand : MonoBehaviour
     public Transform trackingSpace;
     public float speed;
     public Transform head;
-    bool isGrabbing = false;
 
     // Start is called before the first frame update
     void Start()

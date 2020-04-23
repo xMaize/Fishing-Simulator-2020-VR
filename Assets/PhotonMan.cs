@@ -14,7 +14,9 @@ public class PhotonMan : MonoBehaviourPunCallbacks
 
     public GameObject playerPrefab;
     public GameObject fishGearPrefab;
-    //public GameObject cameraPrefab;
+    public GameObject fishPrefab;
+    //List<Fish> schoolOfFish = new List<Fish>();
+    //Vector3[] fishSpawns = new Vector3[10];
     public Rig rig;
 
     void Start()
@@ -44,6 +46,15 @@ public class PhotonMan : MonoBehaviourPunCallbacks
         Debug.Log("Joined a room");
         Debug.Log("Players in room: " + PhotonNetwork.CurrentRoom.PlayerCount);
         //OVRCameraRig camera = PhotonNetwork.Instantiate(cameraPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<OVRCameraRig>();
+
+        if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
+        {
+            for (int i = 0; i < 10; i++)
+            {
+                Fish fish = PhotonNetwork.Instantiate(fishPrefab.name, new Vector3(0, 0.5f, 20), Quaternion.identity).GetComponent<Fish>();
+            }
+        }
+
         Avatar avatar = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<Avatar>();
         avatar.rig = rig;
 
