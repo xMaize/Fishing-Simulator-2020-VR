@@ -13,8 +13,9 @@ public class PhotonMan : MonoBehaviourPunCallbacks
     }
 
     public GameObject playerPrefab;
-    public GameObject cameraPrefab;
-    //public Rig rig;
+    public GameObject fishGearPrefab;
+    //public GameObject cameraPrefab;
+    public Rig rig;
 
     void Start()
     {
@@ -42,9 +43,11 @@ public class PhotonMan : MonoBehaviourPunCallbacks
     {
         Debug.Log("Joined a room");
         Debug.Log("Players in room: " + PhotonNetwork.CurrentRoom.PlayerCount);
-        OVRCameraRig camera = PhotonNetwork.Instantiate(cameraPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<OVRCameraRig>();
+        //OVRCameraRig camera = PhotonNetwork.Instantiate(cameraPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<OVRCameraRig>();
         Avatar avatar = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<Avatar>();
-        avatar.rig = camera.GetComponent<Rig>();
+        avatar.rig = rig;
+
+        FishGearPhoton fishGear = PhotonNetwork.Instantiate(fishGearPrefab.name, new Vector3(0, 10, 3), Quaternion.identity).GetComponent<FishGearPhoton>();
     }
     // Update is called once per frame
     void Update()
