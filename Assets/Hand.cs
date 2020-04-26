@@ -11,6 +11,7 @@ public class Hand : MonoBehaviour
     public Transform trackingSpace;
     public float speed;
     public Transform head;
+    bool fishingRodIsHeld = false;
 
     // Start is called before the first frame update
     void Start()
@@ -96,6 +97,22 @@ public class Hand : MonoBehaviour
             rotationDifference.ToAngleAxis(out angle, out axis);
             Vector3 angularVelocity = -Mathf.Deg2Rad * angle / Time.fixedDeltaTime * axis;
             attachedRigidBody.angularVelocity = angularVelocity;
+            
+            //Attempting to remove the force tethers from the bobber on hand squeeze
+            if(attachedRigidBody.name == "fishing_pole")
+            {
+                GameObject bobberChild = attachedRigidBody.transform.GetChild(0).gameObject;
+                Debug.Log("Child name: " + bobberChild);
+                if(OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, myHand) > .05f)
+                {
+                    JointDrive jd = bobberChild.GetComponent<ConfigurableJoint>().xDrive;
+                    jd.positionSpring = 0;
+                    bobberChild.GetComponent<ConfigurableJoint>().xDrive = jd;
+                    bobberChild.GetComponent<ConfigurableJoint>().yDrive = jd;
+                    bobberChild.GetComponent<ConfigurableJoint>().zDrive = jd;
+                }
+            }
+            
         }
     }
     

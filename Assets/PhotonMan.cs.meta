@@ -3,7 +3,11 @@ guid: 70b78843169192f4f9004cfda6bb317c
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - playerPrefab: {instanceID: 0}
+  - fishGearPrefab: {instanceID: 0}
+  - fishPrefab: {instanceID: 0}
+  - rig: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
