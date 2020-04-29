@@ -5,11 +5,15 @@ using UnityEngine.AI;
 
 public class FishMove : MonoBehaviour
 {
-
     // Start is called before the first frame update
     void Start()
     {
         StartCoroutine(randomHit());
+    }
+
+    private void Update()
+    {
+
     }
 
     //Gives the fish a new destination on the NavMesh every 10 seconds
@@ -20,23 +24,12 @@ public class FishMove : MonoBehaviour
 
         while (true)
         {
+
             NavMeshAgent agent = GetComponent<NavMeshAgent>();
-            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 5f);
-            int i = 0;
-            
-            while(i < hitColliders.Length)
-            {                
-                if(hitColliders[i].name == "bobber")
-                {
-                    agent.destination = hitColliders[i].attachedRigidbody.position;
-                    yield return new WaitForSeconds(6);
-                }
-                i++;
-             }
-            
+
             Vector3 randomDirection = Random.insideUnitSphere * 15;
 
-            if(!firstPass)
+            if (!firstPass)
             {
                 if (((randomDirection.x > 0f && prevDirection.x > 0f) && (randomDirection.z > 0f && prevDirection.z > 0f)) ||
                   ((randomDirection.x < 0f && prevDirection.x < 0f) && (randomDirection.z < 0f && prevDirection.z < 0f)) ||
@@ -58,9 +51,47 @@ public class FishMove : MonoBehaviour
             agent.destination = finalPosition;
 
             yield return new WaitForSeconds(8);
+
+            Collider[] hitColliders = Physics.OverlapSphere(transform.position, 4f);
+            int i = 0;
+
+            while (i < hitColliders.Length)
+            {
+                if (hitColliders[i].name == "bobber")
+                {
+                    agent.destination = hitColliders[i].attachedRigidbody.position;
+                    yield return new WaitForSeconds(5);
+                    //Debug.Log("Is Caught: " + isCaught);
+                }
+                i++;
+            }
+        }
+        /*
+        while (isCaught)
+        {
+            /*
+            NavMeshAgent agent = GetComponent<NavMeshAgent>();
+            Vector3 catchPos = agent.transform.position;
+            GetComponent<GameObject>().transform.parent = bobber.transform;
+
+            agent.enabled = false;
+            
+            Debug.Log("Enter trigger");
+            Destroy(GetComponent<GameObject>());
+
+            break;
+        }
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.attachedRigidbody.name == "bobber")
+        {
+            isCaught = true;
+            bobber = other.attachedRigidbody;
         }
 
-        
-
+    }
+    */
     }
 }

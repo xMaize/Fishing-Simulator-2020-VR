@@ -19,7 +19,11 @@ public class Hand : MonoBehaviour
     public float arcSpeed;
     List<GameObject> arcPoints = new List<GameObject>();
     public bool useGoGo;
-    bool fishingRodIsHeld = false;
+    public float reelStrength = 5f;
+    
+    //for the rod
+    bool isCast = false;
+    Vector3 prevPos = new Vector3();
 
     // Start is called before the first frame update
     void Start()
@@ -56,7 +60,8 @@ public class Hand : MonoBehaviour
 
         arcPoints.Clear();
 
-        if (!isHolding()) {
+        if (!isHolding())
+        {
             while (distance < 10)
             {
                 Vector3 delta_p = arcVelocity * .01f;
@@ -102,6 +107,43 @@ public class Hand : MonoBehaviour
                 go.transform.localScale = new Vector3(1, 1, delta_p.magnitude);
                 arcPoints.Add(go);
             }
+        }
+        else if (grabbedObject.name == "fishing_pole")
+        {
+            Vector3 rodPos = grabbedObject.transform.position;
+            Rigidbody rb = grabbedObject.GetComponent<Rigidbody>();
+            GameObject bobberChild = rb.transform.GetChild(0).gameObject;
+            //Debug.Log("Child name: " + bobberChild);
+
+            Rigidbody bobberRb = bobberChild.GetComponent<Rigidbody>();
+            if (Time.frameCount % 4 == 0);
+            {
+                prevPos = bobberRb.transform.position;
+            }
+
+            //Kills spring driver to emulate "casting"
+            if (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, myHand) > .20f && isCast == false)
+            {
+                JointDrive jd = bobberChild.GetComponent<ConfigurableJoint>().xDrive;
+                jd.positionSpring = 0;
+                bobberChild.GetComponent<ConfigurableJoint>().xDrive = jd;
+                bobberChild.GetComponent<ConfigurableJoint>().yDrive = jd;
+                bobberChild.GetComponent<ConfigurableJoint>().zDrive = jd;
+
+                Vector3 throwVector = bobberRb.transform.position - prevPos;
+                bobberRb.AddForce(throwVector * 10, ForceMode.Impulse);
+                isCast = true;
+
+            }
+            //temporary method of returning the bobber to the rod
+            //TODO: implement working crank mechanic
+            else if (OVRInput.Get(OVRInput.Button.PrimaryThumbstick, myHand) == true && isCast == true)
+            {
+                bobberChild.GetComponent<Rigidbody>().AddForce((grabbedObject.transform.position - bobberChild.transform.position).normalized * reelStrength);
+                isCast = bobberChild.GetComponent<BobberCatch>().IsCast();
+                
+            }
+
         }
 
         /*
@@ -191,41 +233,24 @@ public class Hand : MonoBehaviour
         {
             canSnapRotate = true;
         }
+/*
+        //Lets go of joints and non-rigid movables
+        float triggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, myHand);
+
+        if (triggerValue < 0.04f && grabbedObject != null)
+        {
+            if (grabbedObject.endGrab(this))
+            {
+                grabbedObject = null;
+            }
+        }
+        */
 
     }
 
     private void FixedUpdate()
     {
-        /*
-        if (attachedRigidBody != null)
-        {
-            Vector3 difference = attachedRigidBody.position - attachPoint.position;
-            attachedRigidBody.velocity = -difference / Time.fixedDeltaTime;
 
-            Quaternion rotationDifference = attachedRigidBody.rotation * Quaternion.Inverse(attachPoint.rotation);
-            float angle;
-            Vector3 axis;
-            rotationDifference.ToAngleAxis(out angle, out axis);
-            Vector3 angularVelocity = -Mathf.Deg2Rad * angle / Time.fixedDeltaTime * axis;
-            attachedRigidBody.angularVelocity = angularVelocity;
-            
-            //Attempting to remove the force tethers from the bobber on hand squeeze
-            if(attachedRigidBody.name == "fishing_pole")
-            {
-                GameObject bobberChild = attachedRigidBody.transform.GetChild(0).gameObject;
-                Debug.Log("Child name: " + bobberChild);
-                if(OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, myHand) > .05f)
-                {
-                    JointDrive jd = bobberChild.GetComponent<ConfigurableJoint>().xDrive;
-                    jd.positionSpring = 0;
-                    bobberChild.GetComponent<ConfigurableJoint>().xDrive = jd;
-                    bobberChild.GetComponent<ConfigurableJoint>().yDrive = jd;
-                    bobberChild.GetComponent<ConfigurableJoint>().zDrive = jd;
-                }
-            }
-            
-        }
-        */
     }
     
     private void OnTriggerStay(Collider other)

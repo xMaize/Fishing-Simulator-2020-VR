@@ -15,7 +15,10 @@ GameObject:
   - component: {fileID: 1690746803040875326}
   - component: {fileID: 2589306821854341395}
   - component: {fileID: 4045699551519800493}
+  - component: {fileID: 3748514059529967835}
   - component: {fileID: 1557010325298424302}
+  - component: {fileID: 2504302582474104837}
+  - component: {fileID: -1585271124199219102}
   m_Layer: 0
   m_Name: fish1
   m_TagString: Untagged
@@ -155,6 +158,18 @@ MonoBehaviour:
   fish: {fileID: 5912110910931829973}
   networkFishPos: {x: 0, y: 0, z: 0}
   networkFishRot: {x: 0, y: 0, z: 0, w: 0}
+--- !u!114 &3748514059529967835
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7230336049839044294}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7d1f6669d67b107489123abc65c5b100, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &1557010325298424302
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -170,3 +185,32 @@ MonoBehaviour:
   m_SynchronizePosition: 1
   m_SynchronizeRotation: 1
   m_SynchronizeScale: 0
+--- !u!65 &2504302582474104837
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7230336049839044294}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 0.082380235, y: 0.050468653, z: 0.045391362}
+  m_Center: {x: 0.0014959972, y: -0.019210761, z: 0.12696746}
+--- !u!54 &-1585271124199219102
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7230336049839044294}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 84
+  m_CollisionDetection: 0

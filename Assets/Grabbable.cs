@@ -7,8 +7,10 @@ public class Grabbable : MonoBehaviour
 {
 
     Hand grabbedBy = null;
-    Transform grabbedLocation;
+    Transform offsetLocation = null; // where the object goes without use of force
     Rigidbody rb;
+    Vector3 localGrabbedLocation;
+    public bool useForce = false;
 
     // Start is called before the first frame update
     void Start()
@@ -27,35 +29,26 @@ public class Grabbable : MonoBehaviour
 
         if (grabbedBy != null)
         {
-            Vector3 difference = rb.position - grabbedLocation.position;
-            rb.velocity = -difference / Time.fixedDeltaTime;
-
-            Quaternion rotationDifference = rb.rotation * Quaternion.Inverse(grabbedLocation.rotation);
-            float angle;
-            Vector3 axis;
-            rotationDifference.ToAngleAxis(out angle, out axis);
-            Vector3 angularVelocity = -Mathf.Deg2Rad * angle / Time.fixedDeltaTime * axis;
-            rb.angularVelocity = angularVelocity;
-
-        }
-
-        //Attempting to remove the force tethers from the bobber on hand squeeze
-        /*
-        if (rb.name == "fishing_pole")
-        {
-            GameObject bobberChild = rb.transform.GetChild(0).gameObject;
-            Debug.Log("Child name: " + bobberChild);
-            if (OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, myHand) > .05f)
+            if (!useForce)
             {
-                JointDrive jd = bobberChild.GetComponent<ConfigurableJoint>().xDrive;
-                jd.positionSpring = 0;
-                bobberChild.GetComponent<ConfigurableJoint>().xDrive = jd;
-                bobberChild.GetComponent<ConfigurableJoint>().yDrive = jd;
-                bobberChild.GetComponent<ConfigurableJoint>().zDrive = jd;
+                Vector3 difference = rb.position - offsetLocation.position;
+                rb.velocity = -difference / Time.fixedDeltaTime;
+
+                Quaternion rotationDifference = rb.rotation * Quaternion.Inverse(offsetLocation.rotation);
+                float angle;
+                Vector3 axis;
+                rotationDifference.ToAngleAxis(out angle, out axis);
+                Vector3 angularVelocity = -Mathf.Deg2Rad * angle / Time.fixedDeltaTime * axis;
+                rb.angularVelocity = angularVelocity;
+            }
+            else
+            {
+                Vector3 worldGrabPosition = transform.TransformPoint(localGrabbedLocation);
+                Vector3 force = grabbedBy.transform.position - worldGrabPosition;
+                rb.AddForceAtPosition(force, worldGrabPosition);
+                Debug.DrawRay(worldGrabPosition, force);
             }
         }
-        */
-
     }
 
     public bool startGrab(Hand g, Transform grabLocation)
@@ -71,7 +64,9 @@ public class Grabbable : MonoBehaviour
         {
 
             grabbedBy = g;
-            grabbedLocation = grabLocation;
+            offsetLocation = grabLocation;
+            localGrabbedLocation = transform.InverseTransformPoint(g.transform.position);
+            Debug.Log(localGrabbedLocation);
             return true;
 
         }
@@ -86,7 +81,7 @@ public class Grabbable : MonoBehaviour
             return false;
         }
         grabbedBy = null;
-        grabbedLocation = null;
+        offsetLocation = null;
         return true;
 
     }

@@ -15,6 +15,7 @@ public class PhotonMan : MonoBehaviourPunCallbacks
     public GameObject playerPrefab;
     public GameObject fishGearPrefab;
     public GameObject fishPrefab;
+    public Transform fishGearSpawn;
     //List<Fish> schoolOfFish = new List<Fish>();
     //Vector3[] fishSpawns = new Vector3[10];
     public Rig rig;
@@ -58,7 +59,7 @@ public class PhotonMan : MonoBehaviourPunCallbacks
         Avatar avatar = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<Avatar>();
         avatar.rig = rig;
 
-        FishGearPhoton fishGear = PhotonNetwork.Instantiate(fishGearPrefab.name, new Vector3(0, 10, 3), Quaternion.identity).GetComponent<FishGearPhoton>();
+        FishGearPhoton fishGear = PhotonNetwork.Instantiate(fishGearPrefab.name, fishGearSpawn.position, fishGearSpawn.rotation).GetComponent<FishGearPhoton>();
     }
     // Update is called once per frame
     void Update()
