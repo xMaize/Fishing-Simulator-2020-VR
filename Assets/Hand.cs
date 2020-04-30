@@ -233,18 +233,28 @@ public class Hand : MonoBehaviour
         {
             canSnapRotate = true;
         }
-/*
-        //Lets go of joints and non-rigid movables
+        /*
+                //Lets go of joints and non-rigid movables
+                float triggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, myHand);
+
+                if (triggerValue < 0.04f && grabbedObject != null)
+                {
+                    if (grabbedObject.endGrab(this))
+                    {
+                        grabbedObject = null;
+                    }
+                }
+                */
+
         float triggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, myHand);
 
-        if (triggerValue < 0.04f && grabbedObject != null)
+        if (triggerValue < 0.2f && grabbedObject != null)
         {
             if (grabbedObject.endGrab(this))
             {
                 grabbedObject = null;
             }
         }
-        */
 
     }
 
@@ -267,8 +277,9 @@ public class Hand : MonoBehaviour
         }
 
         float triggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, myHand);
+        Debug.Log(this.name + ": " + triggerValue);
 
-        if(triggerValue > 0.05f && grabbedObject == null)
+        if(triggerValue > 0.3f && grabbedObject == null)
         {
             attachPoint.position = otherRb.position;
             attachPoint.rotation = otherRb.rotation;
@@ -277,7 +288,7 @@ public class Hand : MonoBehaviour
                 grabbedObject = gr;
             }
         }
-        else if (triggerValue < 0.04f && grabbedObject != null)
+        else if (triggerValue < 0.2f && grabbedObject != null)
         {
             if (gr.endGrab(this))
             {
@@ -286,7 +297,7 @@ public class Hand : MonoBehaviour
         }        
      
     }
-
+    
     public bool isHolding()
     {
         return grabbedObject != null;
