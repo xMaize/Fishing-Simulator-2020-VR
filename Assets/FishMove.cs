@@ -59,7 +59,7 @@ public class FishMove : MonoBehaviour
 
             while (i < hitColliders.Length)
             {
-                if (hitColliders[i].name == "bobber")
+                if (hitColliders[i].tag == "Bobber")
                 {
                     agent.destination = hitColliders[i].attachedRigidbody.position;
                     yield return new WaitForSeconds(5);

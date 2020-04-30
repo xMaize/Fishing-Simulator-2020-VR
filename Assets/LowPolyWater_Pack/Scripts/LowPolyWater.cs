@@ -8,7 +8,7 @@ namespace LowPolyWater
         public float waveHeight = 0.5f;
         public float waveFrequency = 0.5f;
         public float waveLength = 0.75f;
-        //private List<Rigidbody> rigidbodies = new List<Rigidbody>();
+        private List<Rigidbody> rigidbodies = new List<Rigidbody>();
 
         //Position where the waves originate from
         public Vector3 waveOriginPosition = new Vector3(0.0f, 0.0f, 0.0f);
@@ -68,11 +68,17 @@ namespace LowPolyWater
             GenerateWaves();
         }
 
-        /*
+       
         private void FixedUpdate()
         {
            for (int i = 0; i < rigidbodies.Count; i++)
             {
+                if (rigidbodies[i] == null)
+                {
+                    rigidbodies.Remove(rigidbodies[i]);
+                    break;
+                }
+
                 if (rigidbodies[i].transform.position.y > transform.position.y)
                 {
                     rigidbodies[i].AddForce(Physics.gravity);
@@ -81,13 +87,20 @@ namespace LowPolyWater
                 }
                 else
                 {
-                    rigidbodies[i].AddForce(-1 * Physics.gravity + new Vector3(0, 0.1f, 0));
-                    rigidbodies[i].drag = 10;
-                    //rigidbodies[i].AddTorque(-rigidbodies[i].angularVelocity * 0.05f);
+                    if(rigidbodies[i].name == "bobber")
+                    {
+                        rigidbodies[i].AddForce(-1 * Physics.gravity);
+                        rigidbodies[i].drag = 2;
+                    }
+                    else
+                    {
+                        rigidbodies[i].AddForce(-.5f * Physics.gravity + new Vector3(0, 0.1f, 0));
+                        rigidbodies[i].drag = 10;
+                    }
                 }
             }
         }
-        */
+        
         /// <summary>
         /// Based on the specified wave height and frequency, generate 
         /// wave motion originating from waveOriginPosition
@@ -119,21 +132,27 @@ namespace LowPolyWater
             mesh.MarkDynamic();
             meshFilter.mesh = mesh;
         }
-        /*
-        private void OnTriggerEnter(Collider other)
+
+        public void RemoveFromWater(Rigidbody rb)
+        {
+            rigidbodies.Remove(rb);
+        }
+        
+        private void OnTriggerExit(Collider other)
         {
             Rigidbody otherRb = other.attachedRigidbody;
-            Debug.Log("Name: " + otherRb.name);
+            Debug.Log("Name2: " + otherRb.name);
 
             if (otherRb == null)
             {
+                Debug.Log("oops");
                 return;
             }
 
             rigidbodies.Add(otherRb);
             Debug.Log("Count: " + rigidbodies.Count);
         }
-        */
+        
         /*
         private void OnTriggerExit(Collider other)
         {

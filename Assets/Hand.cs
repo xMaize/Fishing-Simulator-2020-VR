@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Photon.Pun;
 
 public class Hand : MonoBehaviour
 {
@@ -19,11 +20,17 @@ public class Hand : MonoBehaviour
     public float arcSpeed;
     List<GameObject> arcPoints = new List<GameObject>();
     public bool useGoGo;
-    public float reelStrength = 5f;
-    
+    public float reelStrength = 20f;
+    public GameObject physicsBobber;
+
     //for the rod
     bool isCast = false;
-    Vector3 prevPos = new Vector3();
+    bool hitWall = false;
+    bool destroyBobber = false;
+    Vector3 prevPos1 = new Vector3();
+    Vector3 prevPos2 = new Vector3();
+    GameObject rbBobber = null;
+
 
     // Start is called before the first frame update
     void Start()
@@ -110,40 +117,58 @@ public class Hand : MonoBehaviour
         }
         else if (grabbedObject.name == "fishing_pole")
         {
-            Vector3 rodPos = grabbedObject.transform.position;
             Rigidbody rb = grabbedObject.GetComponent<Rigidbody>();
             GameObject bobberChild = rb.transform.GetChild(0).gameObject;
             //Debug.Log("Child name: " + bobberChild);
 
-            Rigidbody bobberRb = bobberChild.GetComponent<Rigidbody>();
-            if (Time.frameCount % 4 == 0);
-            {
-                prevPos = bobberRb.transform.position;
-            }
+            //Rigidbody bobberRb = bobberChild.GetComponent<Rigidbody>();
+            if (Time.frameCount % 4 == 0)
+                prevPos1 = bobberChild.transform.position;
 
-            //Kills spring driver to emulate "casting"
+            if (Time.frameCount % 2 == 0 && Time.frameCount % 4 != 0) 
+                prevPos2 = bobberChild.transform.position;
+
+
+            Vector3 throwAngle = (prevPos2 + prevPos1) / 2f;
+            //Creates new physics bobber in place of old
             if (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, myHand) > .20f && isCast == false)
             {
-                JointDrive jd = bobberChild.GetComponent<ConfigurableJoint>().xDrive;
-                jd.positionSpring = 0;
-                bobberChild.GetComponent<ConfigurableJoint>().xDrive = jd;
-                bobberChild.GetComponent<ConfigurableJoint>().yDrive = jd;
-                bobberChild.GetComponent<ConfigurableJoint>().zDrive = jd;
+                rbBobber = PhotonNetwork.Instantiate(physicsBobber.name, bobberChild.transform.position, bobberChild.transform.rotation);
+                
+                //Gives ownership to whoever created it
+                PhotonView photonView = rbBobber.GetComponent<PhotonView>();
+                if (photonView != null)
+                {
+                    if (!photonView.IsMine)
+                    {
+                        photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+                    }
+                }
 
-                Vector3 throwVector = bobberRb.transform.position - prevPos;
-                bobberRb.AddForce(throwVector * 10, ForceMode.Impulse);
+                Vector3 throwVector = bobberChild.transform.position - throwAngle;
+                bobberChild.GetComponent<MeshRenderer>().enabled = false;
+                Debug.Log("Throw Vector: " + throwVector.ToString());
+
+                rbBobber.GetComponent<Rigidbody>().AddForce(throwVector * 25, ForceMode.Impulse);
                 isCast = true;
 
             }
             //temporary method of returning the bobber to the rod
-            //TODO: implement working crank mechanic
-            else if (OVRInput.Get(OVRInput.Button.PrimaryThumbstick, myHand) == true && isCast == true)
+            //TODO: implement working crank mechanic if possible
+            else if (OVRInput.Get(OVRInput.Button.PrimaryThumbstick, myHand) == true && rbBobber != null) 
             {
-                bobberChild.GetComponent<Rigidbody>().AddForce((grabbedObject.transform.position - bobberChild.transform.position).normalized * reelStrength);
-                isCast = bobberChild.GetComponent<BobberCatch>().IsCast();
-                
-            }
+                rbBobber.GetComponent<Rigidbody>().AddForce((grabbedObject.transform.position - rbBobber.transform.position).normalized * reelStrength);
+                destroyBobber = rbBobber.GetComponent<BobberCatch>().DestroyBobber();
+                hitWall = rbBobber.GetComponent<BobberCatch>().HitEdge();
 
+                if (hitWall || destroyBobber)
+                {
+                    bobberChild.GetComponent<MeshRenderer>().enabled = true;
+                    PhotonNetwork.Destroy(rbBobber);
+                    isCast = false;
+                    rbBobber = null;
+                }
+            }
         }
 
         /*
@@ -265,10 +290,32 @@ public class Hand : MonoBehaviour
     
     private void OnTriggerStay(Collider other)
     {
+        
+
         Rigidbody otherRb = other.attachedRigidbody;
         if (otherRb == null)
         {
             return;
+        }
+
+        PhotonView photonView = otherRb.GetComponent<PhotonView>();
+        if (photonView != null)
+        {
+            if (!photonView.IsMine)
+            {
+                photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+            }
+        }
+        if (otherRb.transform.childCount > 0)
+        {
+            photonView = otherRb.transform.GetChild(0).GetComponent<PhotonView>();
+            if (photonView != null)
+            {
+                if (!photonView.IsMine)
+                {
+                    photonView.TransferOwnership(PhotonNetwork.LocalPlayer);
+                }
+            }
         }
         Grabbable gr = otherRb.GetComponent<Grabbable>();
         if (gr == null)

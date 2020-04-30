@@ -21,6 +21,10 @@ public class PhotonMan : MonoBehaviourPunCallbacks
     //Vector3[] fishSpawns = new Vector3[10];
     public Rig rig;
 
+    private List<Vector3> spawns = new List<Vector3>();
+    private bool isConnected = false;
+
+
     void Start()
     {
         PhotonNetwork.SendRate = 20;
@@ -47,29 +51,34 @@ public class PhotonMan : MonoBehaviourPunCallbacks
     {
         Debug.Log("Joined a room");
         Debug.Log("Players in room: " + PhotonNetwork.CurrentRoom.PlayerCount);
+        isConnected = true;
         //OVRCameraRig camera = PhotonNetwork.Instantiate(cameraPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<OVRCameraRig>();
 
-        if (PhotonNetwork.CurrentRoom.PlayerCount == 1)
-        {
-            for (int i = 0; i < 10; i++)
-            {
-                Fish fish = PhotonNetwork.Instantiate(fishPrefab.name, new Vector3(0, 0.5f, 20), Quaternion.identity).GetComponent<Fish>();
-            }
-        }
+        //We need to instantiate the fish in this script to get them to destroy in the scene properly
+        //For now all there is is this one spot so we should add like 2 more
+        
 
         Avatar avatar = PhotonNetwork.Instantiate(playerPrefab.name, Vector3.zero, Quaternion.identity).GetComponent<Avatar>();
         avatar.rig = rig;
 
         FishGearPhoton fishGear = PhotonNetwork.Instantiate(fishGearPrefab.name, fishGearSpawn.position, fishGearSpawn.rotation).GetComponent<FishGearPhoton>();
-        FloatScript bobber = fishGear.bobber.GetComponent<FloatScript>();
-        bobber.water = water;
-        FloatScript rod = fishGear.rod.GetComponent<FloatScript>();
-        rod.water = water;
 
     }
     // Update is called once per frame
     void Update()
     {
+        spawns.Add(new Vector3(0, 0.5f, 14));
+        spawns.Add(new Vector3(15, 0.5f, 5));
+        spawns.Add(new Vector3(6, 0.5f, -18));
+        spawns.Add(new Vector3(-8, 0.5f, -15));
+        spawns.Add(new Vector3(-18, 0.5f, 4));
 
+        if (isConnected)
+        {
+            if(GameObject.FindGameObjectsWithTag("Fish").Length < 15)
+            {
+                Fish fish = PhotonNetwork.Instantiate(fishPrefab.name, spawns[Random.Range(0,6)], Quaternion.identity).GetComponent<Fish>();
+            }
+        }
     }
 }

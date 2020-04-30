@@ -17,15 +17,16 @@ public class ShoreDetection : MonoBehaviour
 
     }
 
+    //This basically has the collision of the fish look for the bobber or the catch border
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.name == "bobber")
+        if (other.gameObject.tag == "Bobber")
         {
             bobber = other.gameObject;
         }
         else if (other.gameObject.name == "border" && bobber != null)
         { 
-            bobber.GetComponent<BobberCatch>().BorderDetected();
+            bobber.GetComponent<BobberCatch>().FishCaught();
         }
 
     }
