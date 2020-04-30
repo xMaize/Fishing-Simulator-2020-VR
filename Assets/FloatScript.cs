@@ -6,6 +6,7 @@ public class FloatScript : MonoBehaviour
 {
     public GameObject water;
     Rigidbody rb;
+
     // Start is called before the first frame update
     void Start()
     {

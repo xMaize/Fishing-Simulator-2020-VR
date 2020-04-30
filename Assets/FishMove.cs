@@ -48,7 +48,9 @@ public class FishMove : MonoBehaviour
             NavMesh.SamplePosition(randomDirection, out hit, 15, 1);
             Vector3 finalPosition = hit.position;
 
-            agent.destination = finalPosition;
+            if (agent.isActiveAndEnabled) {
+                agent.destination = finalPosition;
+            }
 
             yield return new WaitForSeconds(8);
 
