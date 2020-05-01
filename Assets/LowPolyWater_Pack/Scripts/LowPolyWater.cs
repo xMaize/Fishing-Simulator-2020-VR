@@ -8,6 +8,7 @@ namespace LowPolyWater
         public float waveHeight = 0.5f;
         public float waveFrequency = 0.5f;
         public float waveLength = 0.75f;
+        public AudioClip waterPlop;
         private List<Rigidbody> rigidbodies = new List<Rigidbody>();
 
         //Position where the waves originate from
@@ -137,7 +138,17 @@ namespace LowPolyWater
         {
             rigidbodies.Remove(rb);
         }
-        
+
+        private void OnTriggerEnter(Collider other)
+        {
+
+            Debug.Log("Other: " + other.name);
+            if (!other.name.Equals("fish1(Clone)") && !other.name.Equals("basemap_final") && !rigidbodies.Contains(other.attachedRigidbody)) {
+                AudioSource.PlayClipAtPoint(waterPlop, other.transform.position);
+            }
+            
+        }
+
         private void OnTriggerExit(Collider other)
         {
             Rigidbody otherRb = other.attachedRigidbody;

@@ -68,32 +68,5 @@ public class FishMove : MonoBehaviour
                 i++;
             }
         }
-        /*
-        while (isCaught)
-        {
-            /*
-            NavMeshAgent agent = GetComponent<NavMeshAgent>();
-            Vector3 catchPos = agent.transform.position;
-            GetComponent<GameObject>().transform.parent = bobber.transform;
-
-            agent.enabled = false;
-            
-            Debug.Log("Enter trigger");
-            Destroy(GetComponent<GameObject>());
-
-            break;
-        }
-    }
-
-    private void OnTriggerEnter(Collider other)
-    {
-        if(other.attachedRigidbody.name == "bobber")
-        {
-            isCaught = true;
-            bobber = other.attachedRigidbody;
-        }
-
-    }
-    */
     }
 }

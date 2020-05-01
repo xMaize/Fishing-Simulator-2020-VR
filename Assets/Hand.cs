@@ -20,12 +20,15 @@ public class Hand : MonoBehaviour
     public float arcSpeed;
     List<GameObject> arcPoints = new List<GameObject>();
     public bool useGoGo;
-    public float reelStrength = 20f;
+    public float reelStrength = 1000f;
     public GameObject physicsBobber;
+    public AudioClip whoosh;
+    bool isVibrating = false;
 
     //for the rod
     bool isCast = false;
     bool hitWall = false;
+    bool hitIsland = false;
     bool destroyBobber = false;
     Vector3 prevPos1 = new Vector3();
     Vector3 prevPos2 = new Vector3();
@@ -119,13 +122,12 @@ public class Hand : MonoBehaviour
         {
             Rigidbody rb = grabbedObject.GetComponent<Rigidbody>();
             GameObject bobberChild = rb.transform.GetChild(0).gameObject;
-            //Debug.Log("Child name: " + bobberChild);
+            Grabbable crank = rb.transform.parent.transform.GetChild(1).gameObject.GetComponent<Grabbable>();
 
-            //Rigidbody bobberRb = bobberChild.GetComponent<Rigidbody>();
             if (Time.frameCount % 4 == 0)
                 prevPos1 = bobberChild.transform.position;
 
-            if (Time.frameCount % 2 == 0 && Time.frameCount % 4 != 0) 
+            if (Time.frameCount % 2 == 0 && Time.frameCount % 4 != 0)
                 prevPos2 = bobberChild.transform.position;
 
 
@@ -134,7 +136,7 @@ public class Hand : MonoBehaviour
             if (OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, myHand) > .20f && isCast == false)
             {
                 rbBobber = PhotonNetwork.Instantiate(physicsBobber.name, bobberChild.transform.position, bobberChild.transform.rotation);
-                
+
                 //Gives ownership to whoever created it
                 PhotonView photonView = rbBobber.GetComponent<PhotonView>();
                 if (photonView != null)
@@ -149,19 +151,21 @@ public class Hand : MonoBehaviour
                 bobberChild.GetComponent<MeshRenderer>().enabled = false;
                 Debug.Log("Throw Vector: " + throwVector.ToString());
 
+                AudioSource.PlayClipAtPoint(whoosh, grabbedObject.transform.position);
                 rbBobber.GetComponent<Rigidbody>().AddForce(throwVector * 25, ForceMode.Impulse);
                 isCast = true;
 
             }
             //temporary method of returning the bobber to the rod
             //TODO: implement working crank mechanic if possible
-            else if (OVRInput.Get(OVRInput.Button.PrimaryThumbstick, myHand) == true && rbBobber != null) 
+            else if (crank.isSpinning && rbBobber != null)
             {
                 rbBobber.GetComponent<Rigidbody>().AddForce((grabbedObject.transform.position - rbBobber.transform.position).normalized * reelStrength);
                 destroyBobber = rbBobber.GetComponent<BobberCatch>().DestroyBobber();
                 hitWall = rbBobber.GetComponent<BobberCatch>().HitEdge();
+                hitIsland = rbBobber.GetComponent<BobberCatch>().HitIsland();
 
-                if (hitWall || destroyBobber)
+                if (hitWall || destroyBobber || hitIsland)
                 {
                     bobberChild.GetComponent<MeshRenderer>().enabled = true;
                     PhotonNetwork.Destroy(rbBobber);
@@ -169,66 +173,16 @@ public class Hand : MonoBehaviour
                     rbBobber = null;
                 }
             }
+
+
+            if (rbBobber != null)
+            {
+                if (rbBobber.GetComponent<BobberCatch>().IsHooked())
+                {
+                    StartCoroutine(vibrateController());
+                }
+            }
         }
-
-        /*
-        Ray r = new Ray(Laser.position, Laser.forward);
-        RaycastHit[] hits = Physics.RaycastAll(r, 10.0f);
-        
-        System.Array.Sort(hits, (x, y) => x.distance.CompareTo(y.distance));
-        Laser.localScale = new Vector3(0, 0, 0);
-
-
-        for (int i = 0; i < hits.Length; i++)
-        {
-            Laser.localScale = new Vector3(1, 1, hits[i].distance);
-            RaycastHit hit = hits[i];
-            Rigidbody rb = hit.rigidbody;
-            Grabbable gr = null;
-            if (rb != null)
-            {
-                gr = rb.GetComponent<Grabbable>();
-            }
-            if (gr != null)
-            {
-                float triggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryIndexTrigger, myHand);
-
-                if (triggerValue > 0.05f && grabbedObject == null)
-                {
-                    attachPoint.position = rb.position;
-                    attachPoint.rotation = rb.rotation;
-                    if (gr.startGrab(this, attachPoint))
-                    {
-                        grabbedObject = gr;
-                    }
-                }
-                else if (triggerValue < 0.04f && grabbedObject != null)
-                {
-                    if (gr.endGrab(this))
-                    {
-                        grabbedObject = null;
-                    }
-                }
-                break;
-            }
-            else
-            {
-                if (gr == null)
-                {
-                    //teleportation
-                    Vector3 targetPoint = hit.point;
-                    Vector3 offset = targetPoint - footPos;
-                    bool trigger = OVRInput.GetDown(OVRInput.Button.PrimaryIndexTrigger, myHand);
-
-                    if (trigger)
-                    {
-                        trackingSpace.Translate(offset, Space.World);
-                    }
-                    break;
-                }//if
-            }//else   
-        }//for
-        */
 
         Vector2 joystickInput = OVRInput.Get(OVRInput.Axis2D.PrimaryThumbstick, myHand);
         float up = joystickInput.y;
@@ -258,18 +212,6 @@ public class Hand : MonoBehaviour
         {
             canSnapRotate = true;
         }
-        /*
-                //Lets go of joints and non-rigid movables
-                float triggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, myHand);
-
-                if (triggerValue < 0.04f && grabbedObject != null)
-                {
-                    if (grabbedObject.endGrab(this))
-                    {
-                        grabbedObject = null;
-                    }
-                }
-                */
 
         float triggerValue = OVRInput.Get(OVRInput.Axis1D.PrimaryHandTrigger, myHand);
 
@@ -349,5 +291,19 @@ public class Hand : MonoBehaviour
     {
         return grabbedObject != null;
     }
-    
+
+    IEnumerator vibrateController()
+    {
+        if (!isVibrating) {
+            isVibrating = true;
+            VibrationManager.manager.TriggerVibration(255, 2, 255);
+            yield return new WaitForSeconds(1);
+            isVibrating = false;
+        }
+        else
+        {
+            yield return null;
+        }
+    }
+
 }

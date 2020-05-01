@@ -159,7 +159,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -4453806867672132484, guid: bb6f6740d17caeb419d9831916f53a48, type: 3}
@@ -282,7 +282,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 602267329910272630, guid: 02d9be80d1be4ad45b1462c4c937aca8, type: 3}
@@ -449,7 +449,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 602267329910272630, guid: 02d9be80d1be4ad45b1462c4c937aca8, type: 3}
@@ -501,6 +501,7 @@ MonoBehaviour:
   reelStrength: 5
   physicsBobber: {fileID: 3889693254605129542, guid: 6ce578c439c9ef5409c05d559398dba2,
     type: 3}
+  whoosh: {fileID: 8300000, guid: 75845125fec05344bac2f04842658c4a, type: 3}
 --- !u!54 &461161415
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -614,7 +615,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 602267329910272630, guid: 02d9be80d1be4ad45b1462c4c937aca8, type: 3}
@@ -993,7 +994,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: -3866395180008032421, guid: 6f5847a1accd75a43868f7ddc7e6125d, type: 3}
@@ -1561,7 +1562,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 602267329910272630, guid: 02d9be80d1be4ad45b1462c4c937aca8, type: 3}
@@ -2431,6 +2432,49 @@ Transform:
     type: 3}
   m_PrefabInstance: {fileID: 1300317043}
   m_PrefabAsset: {fileID: 0}
+--- !u!1 &1330838901
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1330838903}
+  - component: {fileID: 1330838902}
+  m_Layer: 0
+  m_Name: VibrationManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &1330838902
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330838901}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 301b4fb095127bc4b8c25faa2493318b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &1330838903
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1330838901}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 15
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1397292819
 GameObject:
   m_ObjectHideFlags: 0
@@ -2951,7 +2995,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 30
   m_Mesh: {fileID: 602267329910272630, guid: 02d9be80d1be4ad45b1462c4c937aca8, type: 3}
@@ -3099,7 +3143,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1865218947}
   m_LocalRotation: {x: 0, y: -0.9063079, z: 0, w: 0.42261827}
-  m_LocalPosition: {x: 5.998, y: 1.69, z: -4.149}
+  m_LocalPosition: {x: 6.693, y: 2.182, z: -4.097}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
@@ -3202,6 +3246,7 @@ MonoBehaviour:
   waveHeight: 0.5
   waveFrequency: 0.5
   waveLength: 0.75
+  waterPlop: {fileID: 8300000, guid: 986db5b2e7fb8994e974a9555352a08d, type: 3}
   waveOriginPosition: {x: 0, y: 0, z: 0}
 --- !u!64 &1922563250
 MeshCollider:
@@ -3213,7 +3258,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 3
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: 4300000, guid: ebfb4988eb16add4784122504f75fe2f, type: 2}
@@ -3232,6 +3277,7 @@ MonoBehaviour:
   waveHeight: 0.5
   waveFrequency: 0.5
   waveLength: 0.75
+  waterPlop: {fileID: 8300000, guid: 986db5b2e7fb8994e974a9555352a08d, type: 3}
   waveOriginPosition: {x: 0, y: 0, z: 0}
 --- !u!1001 &1951240333
 PrefabInstance:
@@ -3588,6 +3634,7 @@ MonoBehaviour:
   reelStrength: 5
   physicsBobber: {fileID: 3889693254605129542, guid: 6ce578c439c9ef5409c05d559398dba2,
     type: 3}
+  whoosh: {fileID: 8300000, guid: 75845125fec05344bac2f04842658c4a, type: 3}
 --- !u!54 &2067925746
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3695,7 +3742,7 @@ MeshCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 4
+  serializedVersion: 3
   m_Convex: 1
   m_CookingOptions: 30
   m_Mesh: {fileID: -3866395180008032421, guid: f1273933b572e874da1714ae37da31ee, type: 3}

@@ -10,6 +10,7 @@ public class BobberCatch : MonoBehaviour
     private Vector3 startPoint;
     private bool destroyCall = false;
     private bool hitEdge = false;
+    private bool hitIsland = false;
 
     public float resistance = 5.0f;
     //public GameObject detector;
@@ -38,9 +39,7 @@ public class BobberCatch : MonoBehaviour
 
             Rigidbody rb = GetComponent<Rigidbody>();
             fish.transform.position = new Vector3(transform.position.x,transform.position.y +.3f,transform.position.z);
-            
-            //TODO this doesnt work how it should
-            //fish.transform.LookAt();
+            fish.transform.LookAt(Vector3.zero);
 
             
 
@@ -63,6 +62,16 @@ public class BobberCatch : MonoBehaviour
         }
     }
 
+    private void OnCollisionEnter(Collision collision)
+    {
+        Debug.Log("Collision: " + collision.gameObject.name);
+
+        if (collision.gameObject.name == "basemap_final")
+        {
+            hitIsland = true;
+        }
+    }
+
     public void FishCaught()
     {
         destroyCall = true;
@@ -71,15 +80,8 @@ public class BobberCatch : MonoBehaviour
         PhotonNetwork.Destroy(fish.gameObject);
 
         fish = null;
+    }
 
-        //Destroy(GetComponent<GameObject>());
-    }
-    /*
-    public void HitWall()
-    {
-        Destroy(GetComponent<GameObject>());
-    }
-    */
     public bool DestroyBobber()
     {
         return destroyCall;
@@ -89,4 +91,15 @@ public class BobberCatch : MonoBehaviour
     {
         return hitEdge;
     }
+
+    public bool IsHooked()
+    {
+        return fish != null;
+    }
+
+    public bool HitIsland()
+    {
+        return hitIsland;
+    }
+
 }

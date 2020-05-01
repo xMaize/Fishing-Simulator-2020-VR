@@ -12,6 +12,7 @@ public class Grabbable : MonoBehaviour
     Transform offsetLocation = null;
     public bool useForce = false;
     public bool useExact = false;
+    public bool isSpinning;
 
     // Start is called before the first frame update
     void Start()
@@ -27,9 +28,8 @@ public class Grabbable : MonoBehaviour
 
     private void FixedUpdate()
     {
-
         if (grabbedBy != null)
-        {   
+        {
             if (!useForce && !useExact)
             {
                 Vector3 difference = rb.position - offsetLocation.position;
@@ -42,8 +42,9 @@ public class Grabbable : MonoBehaviour
                 Vector3 angularVelocity = -Mathf.Deg2Rad * angle / Time.fixedDeltaTime * axis;
                 rb.angularVelocity = angularVelocity;
             }
-            else if(useForce && !useExact)
+            else if (useForce && !useExact)
             {
+                isSpinning = true;
                 Vector3 worldGrabPosition = transform.TransformPoint(localGrabbedLocation);
                 Vector3 force = grabbedBy.transform.position - worldGrabPosition;
                 rb.AddForceAtPosition(3 * force, worldGrabPosition);
@@ -66,6 +67,15 @@ public class Grabbable : MonoBehaviour
                 }
             }
         }
+        else
+        {
+            if(useForce && rb.velocity.magnitude < 0.2f)
+            {
+                rb.velocity = new Vector3(rb.velocity.x, rb.velocity.y, 0);
+                isSpinning = false;
+            }
+        }
+
     }
 
     public bool startGrab(Hand g, Transform grabLocation)
